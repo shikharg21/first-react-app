@@ -1,24 +1,89 @@
-import React from'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-class App extends React.Component{
+class App extends React.Component {
 
-  render(){
-    return(
+  constructor(props) {
+    super(props);
+    this.state = {
+      newItem: "",
+      list: []
+    }
+  }
+
+
+  addItem(todovalue) {
+    if (todovalue !== "") {
+      const newItem = {
+        id: Date.now(),
+        value: todovalue,
+        isDone: false
+      };
+      const list = [...this.state.list];
+      list.push(newItem);
+
+      this.setState({
+        list,
+        newItem: ""
+      });
+    }
+  }
+
+  deleteItem(id) {
+    const list = [...this.state.list]
+    const updatedlist = list.filter(item => item.id !== id);
+    this.setState({ list: updatedlist })
+
+  }
+
+  updateInput(input) {
+    this.setState({ newItem: input });
+  }
+
+  render() {
+    return (
       <div className='App-header'>
-        <img src={logo} width="100" height="100" className='App-logo'/>
+        <img src={logo} width="100" height="100" className='App-logo' />
         <h1 className='app-title'>ToDo App</h1>
         <div className='container'>
           Add an item...
           <br />
-          <input type="text" className="input-text" placeholder="Write a task" />
-          <button className='add-btn'>Add task</button>
+          <input
+            type="text" className="input-text"
+            placeholder="Write a task"
+            required
+            value={this.state.newItem}
+            onChange={e => this.updateInput(e.target.value)}
+
+          />
+          <button
+            className='add-btn'
+            onClick={() => this.addItem(this.state.newItem)}
+            disabled={!this.state.newItem.length}
+          >Add task</button>
           <div className='list'>
             <ul>
+              {this.state.list.map(item => {
+                return (
+                  <li key={item.id}>
+                    <input
+                      type="checkbox"
+                      name="isdone"
+                      checked={item.isDone}
+                      onChange={() => { }}
+                    />
+                    {item.value}
+                    <button
+                      className='btn'
+                      onClick={() => this.deleteItem(item.id)}>
+                    Delete</button>
+                  </li>
+                );
+              })}
               <li>
-                  <input type="checkbox" name=" "  />
-                  record
+                <input type="checkbox" name=" " />
+                record
                   <button className='btn'>Delete</button>
               </li>
             </ul>
